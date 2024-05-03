@@ -3,8 +3,8 @@ version: '3'
 services:
   configurator-back:
     build: .
-    image: configurator-back
-    container_name: back-configurator-container
+    image: oleglaptsay/configurator-image
+    container_name: configurator-container-back
     restart: always
     ports:
-      - "8080:8080"
+      - "8800:8080"

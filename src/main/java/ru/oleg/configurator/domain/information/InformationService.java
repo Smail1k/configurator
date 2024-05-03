@@ -19,21 +19,21 @@ public class InformationService {
     private static final Map<String, Integer> numberWords = new HashMap<>();
 
     static {
-        numberWords.put("single", 1);
-        numberWords.put("double", 2);
-        numberWords.put("triple", 3);
-        numberWords.put("quad", 4);
-        numberWords.put("quintuple", 5);
-        numberWords.put("sextuple", 6);
-        numberWords.put("septuple", 7);
-        numberWords.put("octuple", 8);
-        numberWords.put("nonuple", 9);
-        numberWords.put("decuple", 10);
+        numberWords.put("Single", 1);
+        numberWords.put("Double", 2);
+        numberWords.put("Triple", 3);
+        numberWords.put("Quad", 4);
+        numberWords.put("Quintuple", 5);
+        numberWords.put("Sextuplet", 6);
+        numberWords.put("Septuple", 7);
+        numberWords.put("Octuple", 8);
+        numberWords.put("Nonuple", 9);
+        numberWords.put("Decuple", 10);
     }
 
     public Information getInformation() {
         Information information = new Information();
-//        String inxiOutput = executeCommand("inxi -F");
+//        String inxiOutput = getCommandOutput("inxi -F");
 
         System.out.println();
         System.out.println();
@@ -45,38 +45,64 @@ public class InformationService {
         System.out.println();
         System.out.println();
 
-//        System.out.println();
-//        System.out.println();
-//        System.out.println();
-//        System.out.println(inxiOutput);
-//        System.out.println();
-//        System.out.println();
-//        System.out.println();
-//
-//        // Заполнение полей класса Information
-//        information.setVersionKdePlasma(parseInxiLine(inxiOutput, "12 KDE Plasma\\s+([^\\s]+)"));
-//
-////        information.setVersionKdeFrameworks(parseInxiLine(getCommandOutput("kf5-config --version"),
-////                "KDE Frameworks:\\s+([^\\s]+)"));
-//
-//        information.setVersionCore(parseCore(parseInxiLine(inxiOutput, "12Kernel\\s+(.*?)\\s+12bits"),
-//                parseInxiLine(inxiOutput, "12bits\\s+(.*?)\\s+12Console")));
-//
-//        information.setGraphicPlatform(parseInxiLine(inxiOutput, "12Display\\s+([^\\s]+)"));
-//
-//        information.setProcessors(parseProcessors(parseInxiLine(inxiOutput, "12Info\\s+(.*?)\\s+Core"),
-//                parseInxiLine(inxiOutput, "12Model\\s+(.*?)\\s+12bits")));
-//
-//        information.setRam(parseInxiLine(inxiOutput, "12Memory\\s+(.*?)\\s+Gib"));
-//
-//        information.setGraphicProcessor(parseInxiLine(inxiOutput, "12renderer\\s+([^\\s]+)"));
-//
-//        information.setManufacturer(parseInxiLine(inxiOutput, "12System\\s+(.*?)\\s+12product"));
-//
-//        information.setNameProduct(parseInxiLine(inxiOutput, "12Product\\s+(.*?)\\s+12v"
-//        ));
-//
-//        information.setVersionSystem(parseInxiLine(inxiOutput, "12v\\s+(.*?)\\s+12Serial"));
+
+        String inxiOutput = "System:\n" +
+                "Host: host-69 Kernel: 6.1.57-un-def-alt1 x86_64 bits: 64 Desktop: KDE Plasma 5.27.8 Distro: ALT 10.2\n" +
+                "Machine:\n" +
+                "Type: Kvm System: QEMU product: Standard PC (i440FX + \n" +
+                "PIIX, 1996) v: pc-1440fx-8.1 serial: ‹superuser required>\n" +
+                "Mobo: N/A model: N/A serial: N/A BIOS: SeaBIOS v: rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org date: 04/01/2014\n" +
+                "CPU:\n" +
+                "Info: Triple Core model: QEMU Virtual version 2.5+ bits: 64 type: MCP cache: L2: 16 MiB\n" +
+                "Speed: 3310 MHz min/max: N/A Core speeds (MHz): 1: 3310 2: 3310 3: 3310\n" +
+                "Graphics: Device-1: driver: bochs-drm v: N/A\n" +
+                "Display: x11 server: X.Org 1.20.14 driver: loaded: modesetting unloaded: fbdev, vesa resolution: 1440x900~50HZ\n" +
+                "OpenGL: renderer: llvmpipe (LLVM 11.0.1 128 bits) v: 4.5 Mesa 23.1.8\n" +
+                "Audio:\n" +
+                "Message: No device data found.\n" +
+                "Sound Server-1: PulseAudio V: 16.1 running: yes\n" +
+                "Network:\n" +
+                "Device-1: Intel 82371AB/EB/MB PIIX4 ACPI type: network bridge driver: piix4_smbus\n" +
+                "Device-2: Red Hat Virtio network driver: virtio-pci\n" +
+                "IF: ens18 state: up speed:\n" +
+                "duplex: unknown mac: bc: 24:11:d9:e9:86\n" +
+                "IF-ID-1: docker® state: down mac: 02:42:05:d8:b8:9e\n" +
+                "Drives:\n" +
+                "Local Storage: total: 32 GiB used: 16.36 GiB (51.1%)\n" +
+                "ID-1: /dev/sda vendor: QEMU model: HARDDISK size: 32 GiB\n" +
+                "Partition: ID-1:\n" +
+                "size: 31.87 GiB used: 16.31 GiB (51.2%) fs: btrfs dev: /dev/sda2\n" +
+                "ID-2: /home size: 31.87 GiB used: 16.31 GiB (51.2%) fs: btrfs dev: /dev/sda2\n" +
+                "Swap:\n" +
+                "ID-1: swap-1 type: partition size: 127 MiB used: 48.4 MiB (38.1%) dev: /dev/sda1\n" +
+                "Sensors:\n" +
+                "Message: No sensor data found. Is 1m-sensors configured?\n" +
+                "Info:\n" +
+                "Processes: 174 Uptime: 1d 16h 34m Memory: 3.82 GiB used: 1.11 GiB (29.1%) Shell: Bash inxi: 3.3.04";
+
+        // Заполнение полей класса Information
+        information.setVersionKdePlasma(parseInxiLine(inxiOutput, "KDE Plasma\\s+([^\\s]+)"));
+
+//        information.setVersionKdeFrameworks(parseInxiLine(getCommandOutput("kf5-config --version"),
+//                "KDE Frameworks:\\s+([^\\s]+)"));
+
+        information.setVersionCore(parseCore(parseInxiLine(inxiOutput, "Kernel:\\s+([^\\s]+)"),
+                parseInxiLine(inxiOutput, "bits:\\s+([^\\s]+)")));
+
+        information.setGraphicPlatform(parseInxiLine(inxiOutput, "Display:\\s+([^\\s]+)"));
+
+        information.setProcessors(parseProcessors(parseInxiLine(inxiOutput, "Info:\\s+([^\\s]+)"),
+                parseInxiLine(inxiOutput, "model:\\s+([^\\s]+)")));
+
+        information.setRam(parseInxiLine(inxiOutput, "Memory:\\s+([^\\s]+)"));
+
+        information.setGraphicProcessor(parseInxiLine(inxiOutput, "renderer:\\s+([^\\s]+)"));
+
+        information.setManufacturer(parseInxiLine(inxiOutput, "System:\\s+([^\\s]+)+ product"));
+
+        information.setNameProduct(parseInxiLine(inxiOutput, "product:(.*?)v:"));
+
+        information.setVersionSystem(parseInxiLine(inxiOutput, "v:\\s+([^\\s]+)"));
 
         return information;
     }
@@ -104,8 +130,7 @@ public class InformationService {
 
     // Общий метод для парсинга строки из вывода inxi
     private String parseInxiLine(String inxiOutput, String regex) {
-        // Предположим, что каждое поле начинается с "12", добавим это в регулярное выражение.
-        Pattern pattern = Pattern.compile("12" + regex);
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         Matcher matcher = pattern.matcher(inxiOutput);
         if (matcher.find()) {
             return matcher.group(1).trim();
@@ -126,29 +151,5 @@ public class InformationService {
         return String.format("%s (%s бита)", model, depth);
     }
 
-    public static String executeCommandOnHost(String containerName, String command) throws IOException, InterruptedException {
-        // Команда Docker для выполнения команды в контейнере на хосте
-        String dockerCommand = "docker exec " + containerName + " " + command;
-
-        ProcessBuilder builder = new ProcessBuilder();
-        builder.command("bash", "-c", dockerCommand);
-
-        Process process = builder.start();
-
-        StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
-            }
-        }
-
-        int exitCode = process.waitFor();
-        if (exitCode != 0) {
-            throw new RuntimeException("Failed to execute host command with exit code " + exitCode);
-        }
-
-        return output.toString();
-    }
 }
 

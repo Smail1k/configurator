@@ -1,7 +1,5 @@
 FROM maven:3.8.5-openjdk-17-slim
 
-RUN apt-get update && apt-get install -y bash
-
 WORKDIR /app
 
 COPY ./pom.xml .
