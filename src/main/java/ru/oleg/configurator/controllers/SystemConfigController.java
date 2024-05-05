@@ -3,19 +3,17 @@ package ru.oleg.configurator.controllers;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.oleg.configurator.domain.information.dto.Information;
-import ru.oleg.configurator.domain.information.InformationService;
-
-import java.io.IOException;
+import ru.oleg.configurator.domain.system.dto.SystemConfig;
+import ru.oleg.configurator.domain.system.SystemConfigService;
 
 @RestController
 @RequestMapping("/system")
 @AllArgsConstructor
-public class InformationController {
-    private final InformationService informationService;
+public class SystemConfigController {
+    private final SystemConfigService informationService;
 
     @GetMapping()
-    public ResponseEntity<Information> getInfoSystem(){
+    public ResponseEntity<SystemConfig> getInfoSystem(){
         return ResponseEntity.ok(informationService.getInformation());
     }
 }
