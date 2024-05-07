@@ -7,6 +7,7 @@ import ru.oleg.configurator.domain.system.dto.SystemConfig;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,14 +19,14 @@ public class SystemConfigService {
         SystemConfig systemConfig = new SystemConfig();
 
         systemConfig.setDeviceName(makeDeviceName());
-        systemConfig.setRamInfo(makeRamMemoryInfo());
-        systemConfig.setCpuInfo(makeCpuInfo());
-        systemConfig.setGraphicsInfo(makeGraphicsInfo());
-        systemConfig.setRomInfo(makeRomMemoryInfo());
+        systemConfig.setRamMemory(makeRamMemoryInfo());
+        systemConfig.setCpu(makeCpuInfo());
+        systemConfig.setGraphics(makeGraphicsInfo());
+        systemConfig.setCapacityDisk(makeRomMemoryInfo());
         systemConfig.setOsName(makeOsName());
         systemConfig.setOsType(makeOsType());
         systemConfig.setEnvironmentVersion(makeEnvironmentVersion());
-        systemConfig.setWindowInterface(makeWindowInterface());
+        systemConfig.setInterfaceWindow(makeWindowInterface());
         systemConfig.setVirtualization(makeVirtualization());
 
         return systemConfig;
@@ -69,7 +70,7 @@ public class SystemConfigService {
             e.printStackTrace();
             return null;
         }
-        return extractData(deviceName, "DeviceName:\\s+(.+)");
+        return deviceName;
     }
 
     private String makeRamMemoryInfo() {
@@ -80,7 +81,7 @@ public class SystemConfigService {
             e.printStackTrace();
             return null;
         }
-        return extractData(memoryInfo, "total\\s+([\\d,]+Gi)");
+        return extractData(memoryInfo, "Память:\\s+([\\d,]+)\\s*Gi");
     }
 
     private String makeCpuInfo() {
@@ -91,8 +92,7 @@ public class SystemConfigService {
             e.printStackTrace();
             return null;
         }
-
-        String countCore = extractData(cpuInfo, "CPU(S):\\s(.+)");
+        String countCore = extractData(cpuInfo, "CPU\\(s\\):\\s+(\\d+)");
         String cpuModel = extractData(cpuInfo, "Имя модели:\\s+(.+)");
         return String.format("%s × %s", countCore, cpuModel);
     }
@@ -106,7 +106,7 @@ public class SystemConfigService {
             return null;
         }
 
-        return extractData(graphicsInfo, "");
+        return extractData(graphicsInfo, "описание:\\s+(.+)");
     }
 
     private String makeRomMemoryInfo() {
@@ -118,7 +118,8 @@ public class SystemConfigService {
             return null;
         }
 
-        return extractData(romMemoryInfo, "total\\s+([\\d,]+G)");
+        String result = extractData(romMemoryInfo, "total\\s+([\\d,]*G)");
+        return  result.substring(0, result.length() - 1);
     }
 
     private String makeOsName() {
@@ -153,8 +154,9 @@ public class SystemConfigService {
         } catch (IOException | InterruptedException e) {
             // pass
         }
+
         if (environmentVersion != null) {
-            return extractData(environmentVersion, "SHELL\\s+(.+)");
+            return environmentVersion;
         }
 
         try {
@@ -163,7 +165,7 @@ public class SystemConfigService {
             // pass
         }
         if (environmentVersion != null) {
-            return extractData(environmentVersion, "budgie-desktop\\s+(.+)");
+            return environmentVersion;
         }
 
         try {
@@ -181,7 +183,7 @@ public class SystemConfigService {
             // pass
         }
         if (environmentVersion != null) {
-            return extractData(environmentVersion, "dde-desktop\\s+(.+)");
+            return environmentVersion;
         }
 
         return null;
@@ -191,13 +193,18 @@ public class SystemConfigService {
         String windowInterface;
 
         try {
-            windowInterface = executeCommand("echo $XDG_SESSION_TYPE");
+            windowInterface = executeCommand("cat /etc/gdm3/custom.conf");
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
 
-        return windowInterface;
+        String waylandEnable = extractData(windowInterface, "#WaylandEnable=(.*)");
+        if (Objects.equals(waylandEnable, "true")) {
+            return "Wayland";
+        } else {
+            return "X11";
+        }
     }
 
     private String makeVirtualization() {
@@ -209,8 +216,6 @@ public class SystemConfigService {
             e.printStackTrace();
             return null;
         }
-
-        return extractData(virtualization, "Virtualization:\\s+(.+)");
+        return virtualization;
     }
 }
-

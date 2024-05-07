@@ -7,13 +7,13 @@ import lombok.Setter;
 @Setter
 public class SystemConfig {
     private String deviceName;
-    private String ramInfo;
-    private String cpuInfo;
-    private String graphicsInfo;
-    private String romInfo;
+    private String ramMemory;
+    private String cpu;
+    private String graphics;
+    private String capacityDisk;
     private String osName;
     private String osType;
     private String environmentVersion;
-    private String windowInterface;
+    private String interfaceWindow;
     private String virtualization;
 }
