@@ -1,7 +1,6 @@
 package ru.oleg.configurator.controllers;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.oleg.configurator.domain.user.dto.User;
@@ -15,18 +14,23 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUser());
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PatchMapping("/me")
+    @PostMapping("/me")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         return ResponseEntity.ok(userService.updateMe(user));
     }
 
-    @PatchMapping("/{username}")
+    @PostMapping("/{username}")
     public ResponseEntity<User> updateUser(@PathVariable String username, @RequestBody User user) {
         return ResponseEntity.ok(userService.updateUserByUsername(username, user));
+    }
+
+    @PostMapping
+    public ResponseEntity<User> createUser(@RequestBody User user) {
+        return ResponseEntity.ok(userService.createUser(user));
     }
 }

@@ -3,13 +3,11 @@ package ru.oleg.configurator.domain.system;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.oleg.configurator.domain.system.dto.SystemConfig;
+import static ru.oleg.configurator.domain.utils.ExecuteCommand.executeCommand;
+import static ru.oleg.configurator.domain.utils.ExecuteCommand.extractData;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 @Service
 @AllArgsConstructor
@@ -32,190 +30,105 @@ public class SystemConfigService {
         return systemConfig;
     }
 
-    private static String executeCommand(String command) throws IOException, InterruptedException {
-        try {
-            Process process = Runtime.getRuntime().exec(command);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line;
-            StringBuilder output = new StringBuilder();
-            while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
-            }
-            process.waitFor();
-            return output.toString().trim();
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;  // Возврат строки об ошибке или значения по умолчанию
-        }
-    }
-
-    public static String extractData(String totalDataInfo, String pattern) {
-        String data = null;
-
-        Pattern p = Pattern.compile(pattern);
-        Matcher m = p.matcher(totalDataInfo);
-
-        if (m.find()) {
-            data = m.group(1);
-        }
-
-        return data;
-    }
-
     private String makeDeviceName() {
         String deviceName;
-        try {
-            deviceName = executeCommand("hostname");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+        deviceName = executeCommand("hostname");
         return deviceName;
     }
 
     private String makeRamMemoryInfo() {
         String memoryInfo;
-        try {
-            memoryInfo = executeCommand("free -h");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        memoryInfo = executeCommand("free -h");
+        if (memoryInfo != null) {
+            return extractData(memoryInfo, "Память:\\s+([\\d,]+)\\s*Gi");
+        } else {
             return null;
         }
-        return extractData(memoryInfo, "Память:\\s+([\\d,]+)\\s*Gi");
     }
 
     private String makeCpuInfo() {
         String cpuInfo;
-        try {
-            cpuInfo = executeCommand("lscpu");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        cpuInfo = executeCommand("lscpu");
+        if (cpuInfo != null) {
+            String countCore = extractData(cpuInfo, "CPU\\(s\\):\\s+(\\d+)");
+            String cpuModel = extractData(cpuInfo, "Имя модели:\\s+(.+)");
+            return String.format("%s × %s", countCore, cpuModel);
+        } else {
             return null;
         }
-        String countCore = extractData(cpuInfo, "CPU\\(s\\):\\s+(\\d+)");
-        String cpuModel = extractData(cpuInfo, "Имя модели:\\s+(.+)");
-        return String.format("%s × %s", countCore, cpuModel);
     }
 
     private String makeGraphicsInfo() {
         String graphicsInfo;
-        try {
-            graphicsInfo = executeCommand("lshw -c video");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        graphicsInfo = executeCommand("lshw -c video");
+        if (graphicsInfo != null) {
+            return extractData(graphicsInfo, "описание:\\s+(.+)");
+        } else {
             return null;
         }
-
-        return extractData(graphicsInfo, "описание:\\s+(.+)");
     }
 
     private String makeRomMemoryInfo() {
         String romMemoryInfo;
-        try {
-            romMemoryInfo = executeCommand("df -h --total");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        romMemoryInfo = executeCommand("df -h --total");
+        if (romMemoryInfo != null) {
+            String result = extractData(romMemoryInfo, "total\\s+([\\d,]*G)");
+            return  result.substring(0, result.length() - 1);
+        } else {
             return null;
         }
-
-        String result = extractData(romMemoryInfo, "total\\s+([\\d,]*G)");
-        return  result.substring(0, result.length() - 1);
     }
 
     private String makeOsName() {
         String osName;
-        try {
-            osName = executeCommand("lsb_release -a");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        osName = executeCommand("lsb_release -a");
+        if (osName != null) {
+            return extractData(osName, "Description:\\s+(.+)");
+        } else {
             return null;
         }
-
-        return extractData(osName, "Description:\\s+(.+)");
     }
 
     private String makeOsType() {
         String osType;
-        try {
-            osType = executeCommand("getconf LONG_BIT");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
-
+        osType = executeCommand("getconf LONG_BIT");
         return osType;
     }
 
     private String makeEnvironmentVersion() {
-        String environmentVersion = null;
-
-        try {
-            environmentVersion = executeCommand("gnome-shell --version");
-        } catch (IOException | InterruptedException e) {
-            // pass
-        }
-
-        if (environmentVersion != null) {
+        String environmentVersion;
+        if ((environmentVersion = executeCommand("gnome-shell --version")) != null) {
             return environmentVersion;
-        }
-
-        try {
-            environmentVersion = executeCommand("budgie-desktop --version");
-        } catch (IOException | InterruptedException e) {
-            // pass
-        }
-        if (environmentVersion != null) {
+        } else if ((environmentVersion = executeCommand("budgie-desktop --version")) != null) {
             return environmentVersion;
-        }
-
-        try {
-            environmentVersion = executeCommand("kf5-config --version");
-        } catch (IOException | InterruptedException e) {
-            // pass
-        }
-        if (environmentVersion != null) {
+        } else if ((environmentVersion = executeCommand("kf5-config --version")) != null) {
             return extractData(environmentVersion, "KDE Frameworks:\\s+(.+)");
-        }
-
-        try {
-            environmentVersion = executeCommand("dde-desktop --version");
-        } catch (IOException | InterruptedException e) {
-            // pass
-        }
-        if (environmentVersion != null) {
+        } else if ((environmentVersion = executeCommand("dde-desktop --version")) != null) {
             return environmentVersion;
         }
 
-        return null;
+        return environmentVersion;
     }
 
     private String makeWindowInterface() {
         String windowInterface;
 
-        try {
-            windowInterface = executeCommand("cat /etc/gdm3/custom.conf");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        String waylandEnable = extractData(windowInterface, "#WaylandEnable=(.*)");
-        if (Objects.equals(waylandEnable, "true")) {
-            return "Wayland";
+        windowInterface = executeCommand("cat /etc/gdm3/custom.conf");
+        if (windowInterface != null) {
+            String waylandEnable = extractData(windowInterface, "#WaylandEnable=(.*)");
+            if (Objects.equals(waylandEnable, "true")) {
+                return "Wayland";
+            } else {
+                return "X11";
+            }
         } else {
-            return "X11";
+            return null;
         }
     }
 
     private String makeVirtualization() {
         String virtualization;
-
-        try {
-            virtualization = executeCommand("systemd-detect-virt");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return null;
-        }
+        virtualization = executeCommand("systemd-detect-virt");
         return virtualization;
     }
 }
