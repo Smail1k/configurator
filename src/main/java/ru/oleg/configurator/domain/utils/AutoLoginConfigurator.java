@@ -1,7 +1,5 @@
 package ru.oleg.configurator.domain.utils;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,41 +12,40 @@ public class AutoLoginConfigurator {
     public static void changeAutoLogin(String username, boolean value) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(CONFIG_FILE_PATH));
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(CONFIG_FILE_PATH))) {
-                boolean daemonSectionFound = false;
-                boolean autoLoginEnabled = false;
-                for (String line : lines) {
-                    if (line.trim().equals("[daemon]")) {
-                        daemonSectionFound = true;
-                        writer.write(line);
-                        writer.newLine();
-                        continue;
-                    }
-                    if (daemonSectionFound && line.trim().startsWith("AutomaticLoginEnable")) {
-                        writer.write("AutomaticLoginEnable = " + value);
-                        autoLoginEnabled = true;
-                    } else if (daemonSectionFound && line.trim().startsWith("AutomaticLogin")) {
-                        writer.write("AutomaticLogin = " + username);
-                    } else {
-                        writer.write(line);
-                    }
-                    writer.newLine();
+            StringBuilder newContent = new StringBuilder();
+            boolean daemonSectionFound = false;
+            boolean autoLoginEnabled = false;
+
+            for (String line : lines) {
+                if (line.trim().equals("[daemon]")) {
+                    daemonSectionFound = true;
+                    newContent.append(line).append("\n");
+                    continue;
                 }
-                if (!daemonSectionFound) {
-                    writer.write("[daemon]");
-                    writer.newLine();
-                    writer.write("AutomaticLoginEnable = " + value);
-                    writer.newLine();
-                    writer.write("AutomaticLogin = " + username);
-                } else if (!autoLoginEnabled) {
-                    writer.write("AutomaticLoginEnable = " + value);
-                    writer.newLine();
-                    writer.write("AutomaticLogin = " + username);
+                if (daemonSectionFound && line.trim().startsWith("AutomaticLoginEnable")) {
+                    newContent.append("AutomaticLoginEnable = ").append(value).append("\n");
+                    autoLoginEnabled = true;
+                } else if (daemonSectionFound && line.trim().startsWith("AutomaticLogin")) {
+                    newContent.append("AutomaticLogin = ").append(username).append("\n");
+                } else {
+                    newContent.append(line).append("\n");
                 }
             }
-        } catch (IOException e) {
+            if (!daemonSectionFound) {
+                newContent.append("[daemon]").append("\n");
+                newContent.append("AutomaticLoginEnable = ").append(value).append("\n");
+                newContent.append("AutomaticLogin = ").append(username).append("\n");
+            } else if (!autoLoginEnabled) {
+                newContent.append("AutomaticLoginEnable = ").append(value).append("\n");
+                newContent.append("AutomaticLogin = ").append(username).append("\n");
+            }
+
+            // Запись нового содержимого в файл с правами суперпользователя
+            ProcessBuilder pb = new ProcessBuilder("sudo", "bash", "-c", "echo \"" + newContent.toString().replace("\"", "\\\"") + "\" > " + CONFIG_FILE_PATH);
+            Process p = pb.start();
+            p.waitFor();
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 }
-
