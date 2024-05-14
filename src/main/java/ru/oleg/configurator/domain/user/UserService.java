@@ -9,6 +9,7 @@ import static ru.oleg.configurator.domain.utils.ExecuteCommand.executeCommand;
 import static ru.oleg.configurator.domain.utils.ExecuteCommand.extractData;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
