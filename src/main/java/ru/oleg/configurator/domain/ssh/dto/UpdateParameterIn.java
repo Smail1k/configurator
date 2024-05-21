@@ -5,5 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ConfigSSH {
+public class UpdateParameterIn {
+    private String parameterName;
+    private String parameterValue;
 }

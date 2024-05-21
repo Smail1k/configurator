@@ -2,46 +2,39 @@ package ru.oleg.configurator.domain.ssh;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.oleg.configurator.domain.ssh.dto.ConfigSSH;
+import ru.oleg.configurator.domain.ssh.dto.SshConfig;
+import ru.oleg.configurator.domain.ssh.dto.UpdateParameterIn;
+import ru.oleg.configurator.domain.utils.Parser;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.nio.file.Files;
-import java.util.Objects;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class SshService {
+    private final Parser parsers;
 
-    public ConfigSSH getConfigSSH() {
-        String filePath = "/etc/ssh/ssh_config"; // Путь к файлу конфигурации SSH
-        return new ConfigSSH();
+    public SshConfig getConfigSSH() {
+        String filePath = "/etc/ssh/sshd_config"; // Путь к файлу конфигурации SSH
+        SshConfig sshConfig = new SshConfig();
+        return parsers.parseFileConfig(sshConfig, filePath);
     }
 
-    public ConfigSSH updateConfigSSH(ConfigSSH configSSH) {
-        String filePath = "/etc/ssh/ssh_config"; // Путь к файлу конфигурации SSH
-        return new ConfigSSH();
-    }
-
-    private String parseFileConfig(String filePath) throws IOException {
+    public void updateConfigSSH(UpdateParameterIn updateParameterIn) {
+        String filePath = "/etc/ssh/sshd_config"; // Путь к файлу конфигурации SSH
         try {
-            String fileContent = readFileToString(filePath);
-            return Objects.requireNonNullElse(fileContent, "No configurations found");
-        } catch (NullPointerException e) {
-            return "Failed to read the file";
-        }
-    }
-
-    private String readFileToString(String filePath) {
-        try {
-            return Files.readString(Paths.get(filePath));
+            List<String> lines = Files.readAllLines(Paths.get(filePath));
+            List<String> updatedLines = lines.stream()
+                    .map(line -> parsers.updateLine(line, updateParameterIn.getParameterName(),
+                            updateParameterIn.getParameterValue()))
+                    .collect(Collectors.toList());
+            Files.write(Paths.get(filePath), updatedLines, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            // pass
         }
     }
-
-
-
-
 }

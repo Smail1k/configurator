@@ -2,16 +2,16 @@ package ru.oleg.configurator.domain.nginx;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.oleg.configurator.domain.nginx.dto.ConfigNginx;
+import ru.oleg.configurator.domain.nginx.dto.NginxConfig;
 
 @Service
 @AllArgsConstructor
 public class NginxService {
-    public ConfigNginx getConfigNginx() {
-        return new ConfigNginx();
+    public NginxConfig getConfigNginx() {
+        return new NginxConfig();
     }
 
-    public ConfigNginx updateConfigNginx(ConfigNginx configNginx) {
+    public NginxConfig updateConfigNginx(NginxConfig configNginx) {
         return configNginx;
     }
 }

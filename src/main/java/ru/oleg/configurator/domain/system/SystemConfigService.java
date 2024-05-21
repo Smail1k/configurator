@@ -3,8 +3,8 @@ package ru.oleg.configurator.domain.system;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.oleg.configurator.domain.system.dto.SystemConfig;
-import static ru.oleg.configurator.domain.utils.ExecuteCommand.executeCommand;
-import static ru.oleg.configurator.domain.utils.ExecuteCommand.extractData;
+import ru.oleg.configurator.domain.utils.InteractionSystem;
+import ru.oleg.configurator.domain.utils.Parser;
 
 import java.util.Objects;
 
@@ -12,6 +12,8 @@ import java.util.Objects;
 @Service
 @AllArgsConstructor
 public class SystemConfigService {
+    private final InteractionSystem interactionSystem;
+    private final Parser parsers;
 
     public SystemConfig getInformation() {
         SystemConfig systemConfig = new SystemConfig();
@@ -32,15 +34,15 @@ public class SystemConfigService {
 
     private String makeDeviceName() {
         String deviceName;
-        deviceName = executeCommand("hostname");
+        deviceName = interactionSystem.executeCommand("hostname");
         return deviceName;
     }
 
     private String makeRamMemoryInfo() {
         String memoryInfo;
-        memoryInfo = executeCommand("free -h");
+        memoryInfo = interactionSystem.executeCommand("free -h");
         if (memoryInfo != null) {
-            return extractData(memoryInfo, "Память:\\s+([\\d,]+)\\s*Gi");
+            return parsers.extractData(memoryInfo, "Память:\\s+([\\d,]+)\\s*Gi");
         } else {
             return null;
         }
@@ -48,10 +50,10 @@ public class SystemConfigService {
 
     private String makeCpuInfo() {
         String cpuInfo;
-        cpuInfo = executeCommand("lscpu");
+        cpuInfo = interactionSystem.executeCommand("lscpu");
         if (cpuInfo != null) {
-            String countCore = extractData(cpuInfo, "CPU\\(s\\):\\s+(\\d+)");
-            String cpuModel = extractData(cpuInfo, "Имя модели:\\s+(.+)");
+            String countCore = parsers.extractData(cpuInfo, "CPU\\(s\\):\\s+(\\d+)");
+            String cpuModel = parsers.extractData(cpuInfo, "Имя модели:\\s+(.+)");
             return String.format("%s × %s", countCore, cpuModel);
         } else {
             return null;
@@ -60,9 +62,9 @@ public class SystemConfigService {
 
     private String makeGraphicsInfo() {
         String graphicsInfo;
-        graphicsInfo = executeCommand("lshw -c video");
+        graphicsInfo = interactionSystem.executeCommand("lshw -c video");
         if (graphicsInfo != null) {
-            return extractData(graphicsInfo, "описание:\\s+(.+)");
+            return parsers.extractData(graphicsInfo, "описание:\\s+(.+)");
         } else {
             return null;
         }
@@ -70,9 +72,9 @@ public class SystemConfigService {
 
     private String makeRomMemoryInfo() {
         String romMemoryInfo;
-        romMemoryInfo = executeCommand("df -h --total");
+        romMemoryInfo = interactionSystem.executeCommand("df -h --total");
         if (romMemoryInfo != null) {
-            String result = extractData(romMemoryInfo, "total\\s+([\\d,]*G)");
+            String result = parsers.extractData(romMemoryInfo, "total\\s+([\\d,]*G)");
             return  result.substring(0, result.length() - 1);
         } else {
             return null;
@@ -81,9 +83,9 @@ public class SystemConfigService {
 
     private String makeOsName() {
         String osName;
-        osName = executeCommand("lsb_release -a");
+        osName = interactionSystem.executeCommand("lsb_release -a");
         if (osName != null) {
-            return extractData(osName, "Description:\\s+(.+)");
+            return parsers.extractData(osName, "Description:\\s+(.+)");
         } else {
             return null;
         }
@@ -91,19 +93,19 @@ public class SystemConfigService {
 
     private String makeOsType() {
         String osType;
-        osType = executeCommand("getconf LONG_BIT");
+        osType = interactionSystem.executeCommand("getconf LONG_BIT");
         return osType;
     }
 
     private String makeEnvironmentVersion() {
         String environmentVersion;
-        if ((environmentVersion = executeCommand("gnome-shell --version")) != null) {
+        if ((environmentVersion = interactionSystem.executeCommand("gnome-shell --version")) != null) {
             return environmentVersion;
-        } else if ((environmentVersion = executeCommand("budgie-desktop --version")) != null) {
+        } else if ((environmentVersion = interactionSystem.executeCommand("budgie-desktop --version")) != null) {
             return environmentVersion;
-        } else if ((environmentVersion = executeCommand("kf5-config --version")) != null) {
-            return extractData(environmentVersion, "KDE Frameworks:\\s+(.+)");
-        } else if ((environmentVersion = executeCommand("dde-desktop --version")) != null) {
+        } else if ((environmentVersion = interactionSystem.executeCommand("kf5-config --version")) != null) {
+            return parsers.extractData(environmentVersion, "KDE Frameworks:\\s+(.+)");
+        } else if ((environmentVersion = interactionSystem.executeCommand("dde-desktop --version")) != null) {
             return environmentVersion;
         }
 
@@ -113,9 +115,9 @@ public class SystemConfigService {
     private String makeWindowInterface() {
         String windowInterface;
 
-        windowInterface = executeCommand("cat /etc/gdm3/custom.conf");
+        windowInterface = interactionSystem.executeCommand("cat /etc/gdm3/custom.conf");
         if (windowInterface != null) {
-            String waylandEnable = extractData(windowInterface, "#WaylandEnable=(.*)");
+            String waylandEnable = parsers.extractData(windowInterface, "#WaylandEnable=(.*)");
             if (Objects.equals(waylandEnable, "true")) {
                 return "Wayland";
             } else {
@@ -128,7 +130,7 @@ public class SystemConfigService {
 
     private String makeVirtualization() {
         String virtualization;
-        virtualization = executeCommand("systemd-detect-virt");
+        virtualization = interactionSystem.executeCommand("systemd-detect-virt");
         return virtualization;
     }
 }

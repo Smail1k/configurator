@@ -2,16 +2,16 @@ package ru.oleg.configurator.domain.apache;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.oleg.configurator.domain.apache.dto.ConfigApache;
+import ru.oleg.configurator.domain.apache.dto.ApacheConfig;
 
 @Service
 @AllArgsConstructor
 public class ApacheService {
-    public ConfigApache getConfigApache() {
-        return new ConfigApache();
+    public ApacheConfig getConfigApache() {
+        return new ApacheConfig();
     }
 
-    public ConfigApache updateConfigApache(ConfigApache configApache) {
+    public ApacheConfig updateConfigApache(ApacheConfig configApache) {
         return configApache;
     }
 }

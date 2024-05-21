@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.oleg.configurator.domain.nginx.NginxService;
-import ru.oleg.configurator.domain.nginx.dto.ConfigNginx;
+import ru.oleg.configurator.domain.nginx.dto.NginxConfig;
 
 @RestController
 @RequestMapping("/nginx")
@@ -13,12 +13,12 @@ public class NginxController {
     private final NginxService nginxService;
 
     @GetMapping
-    public ResponseEntity<ConfigNginx> getConfigNginx() {
+    public ResponseEntity<NginxConfig> getConfigNginx() {
         return ResponseEntity.ok(nginxService.getConfigNginx());
     }
 
     @PostMapping
-    public ResponseEntity<ConfigNginx> updateConfigNginx(@RequestBody ConfigNginx configNginx) {
+    public ResponseEntity<NginxConfig> updateConfigNginx(@RequestBody NginxConfig configNginx) {
         return ResponseEntity.ok(nginxService.updateConfigNginx(configNginx));
     }
 }

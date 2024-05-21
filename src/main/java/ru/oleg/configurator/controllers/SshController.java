@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.oleg.configurator.domain.ssh.SshService;
-import ru.oleg.configurator.domain.ssh.dto.ConfigSSH;
+import ru.oleg.configurator.domain.ssh.dto.SshConfig;
+import ru.oleg.configurator.domain.ssh.dto.UpdateParameterIn;
 
 @RestController
 @RequestMapping("/ssh")
@@ -13,12 +14,13 @@ public class SshController {
     private final SshService sshService;
 
     @GetMapping
-    public ResponseEntity<ConfigSSH> getConfigSSH() {
+    public ResponseEntity<SshConfig> getConfigSSH() {
         return ResponseEntity.ok(sshService.getConfigSSH());
     }
 
-    @PostMapping
-    public ResponseEntity<ConfigSSH> updateConfigSSH(@RequestBody ConfigSSH configSSH) {
-        return ResponseEntity.ok(sshService.updateConfigSSH(configSSH));
+    @PatchMapping
+    public ResponseEntity<?> updateConfigSSH(@RequestBody UpdateParameterIn updateParameterIn) {
+        sshService.updateConfigSSH(updateParameterIn);
+        return ResponseEntity.ok().build();
     }
 }
