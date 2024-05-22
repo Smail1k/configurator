@@ -45,14 +45,11 @@ public class Parser {
                 if (result != null) {
                     if (result.contains("\t")) {
                         result = result.replaceFirst("\t", " ");
-                        System.out.println(result);
                     }
                     String[] map = result.split(" ", 2);
 
                     try {
                         String nameField = map[0].substring(0, 1).toLowerCase() + map[0].substring(1);
-                        System.out.println(nameField + " value: " + map[1]);
-                        System.out.println();
 
                         Field field = objectClass.getDeclaredField(nameField);
                         field.setAccessible(true);
@@ -83,6 +80,7 @@ public class Parser {
     }
 
     public String updateLine(String line, String parameterName, String parameterValue) {
+        parameterName = parameterName.substring(0, 1).toUpperCase() + parameterName.substring(1);
         // Создаем шаблон для поиска строки с параметром
         String regex = "^[#\\s]*" + parameterName + "\\s*.*";
         if (line.matches(regex)) {

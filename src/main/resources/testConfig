@@ -11,7 +11,7 @@
 
 Include /etc/ssh/sshd_config.d/*.conf
 
-#Port 22
+Port 23
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
@@ -35,7 +35,7 @@ Include /etc/ssh/sshd_config.d/*.conf
 #MaxAuthTries 6
 #MaxSessions 10
 
-#PubkeyAuthentication yes
+PubkeyAuthentication false
 
 # Expect .ssh/authorized_keys2 to be disregarded by default in future.
 #AuthorizedKeysFile	.ssh/authorized_keys .ssh/authorized_keys2
