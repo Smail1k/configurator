@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class User {
-    private Long id;
+public class UserOut {
+    private long id;
     private String username;
     private String fullName;
     private String password;
-    private boolean autoIn;
-    private boolean role;
+    private boolean isAutoIn;
+    private Role role;
 
 }

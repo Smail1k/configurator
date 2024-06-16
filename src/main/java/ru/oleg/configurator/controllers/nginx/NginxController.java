@@ -1,4 +1,4 @@
-package ru.oleg.configurator.controllers;
+package ru.oleg.configurator.controllers.nginx;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

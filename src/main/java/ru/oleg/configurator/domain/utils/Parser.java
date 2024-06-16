@@ -71,7 +71,6 @@ public class Parser {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("RETURN");
         return config;
     }
 

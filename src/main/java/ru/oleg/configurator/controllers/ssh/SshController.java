@@ -1,4 +1,4 @@
-package ru.oleg.configurator.controllers;
+package ru.oleg.configurator.controllers.ssh;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
