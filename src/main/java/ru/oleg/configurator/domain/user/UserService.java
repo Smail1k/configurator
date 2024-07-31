@@ -3,12 +3,13 @@ package ru.oleg.configurator.domain.user;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.oleg.configurator.domain.user.dto.Role;
-import ru.oleg.configurator.domain.user.dto.UserOut;
+import ru.oleg.configurator.domain.user.dto.User;
 import ru.oleg.configurator.domain.utils.InteractionSystem;
 import ru.oleg.configurator.domain.utils.Parser;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,26 +19,26 @@ public class UserService {
     private final Parser parser;
     private final InteractionSystem interactionSystem;
 
-    public List<UserOut> getAllUsers() {
+    public List<User> getAllUsers() {
         String usersString;
         usersString = interactionSystem.executeCommand("getent passwd | awk -F: '$3 >= 1000 && $3 < 1100" +
-                " { print $1, $3 }'");
+                " { print $1 }'");
 
         if (usersString == null) {
             return new ArrayList<>();
         }
 
         String[] usersArray = usersString.split("\n");
-        List<UserOut> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
-        for (String userline: usersArray) {
-            users.add(getUserByUsername(userline.split(" ")[0]));
+        for (String username: usersArray) {
+            users.add(getUserByUsername(username));
         }
 
         return users;
     }
 
-    public UserOut getUserByUsername(String username) {
+    public User getUserByUsername(final String username) {
         boolean checkExistsUser = Boolean.parseBoolean(Objects.requireNonNull(interactionSystem.executeCommand(
                 String.format("id -nG %s | grep -qw sudo && echo \"True\" || echo \"False\"", username))).trim());
 
@@ -45,7 +46,7 @@ public class UserService {
             return null;
         }
 
-        UserOut user = new UserOut();
+        User user = new User();
         user.setUsername(username);
 
         long id = Long.parseLong(Objects.requireNonNull(interactionSystem.executeCommand(
@@ -58,7 +59,7 @@ public class UserService {
 
         String role = Objects.requireNonNull(interactionSystem.executeCommand(
                 String.format("id -nG %s | grep -qw sudo && echo \"True\" || echo \"False\"", username))).trim();
-        user.setRole(Boolean.parseBoolean(role) ? Role.ADMIN: Role.USER);
+        user.setRole(Collections.singleton(Boolean.parseBoolean(role) ? Role.ADMIN : Role.USER));
 
         String password = Objects.requireNonNull(interactionSystem.executeCommand(
                 String.format("sudo grep '^%s:' /etc/shadow | awk -F: '{print $2}'",
@@ -73,18 +74,20 @@ public class UserService {
         return user;
     }
 
-    public UserOut updateMe(UserOut user) {
-        return new UserOut();
+    public User updateMe(User user) {
+        return new User();
     }
 
-    public UserOut updateUser(long id, UserOut user) {
+    public User updateUser(long id, User user) {
         interactionSystem.executeCommand(String.format("sudo chfn -f \"%s\" %s", user.getFullName(), user.getUsername()));
 
-        String role = Objects.requireNonNull(interactionSystem.executeCommand(
+        String roleValueBoolean = Objects.requireNonNull(interactionSystem.executeCommand(
                 String.format("id -nG %s | grep -qw sudo && echo \"True\" || echo \"False\"",
                         user.getUsername()))).trim();
-        if (Role.parseValue(role) != user.getRole()){
-            if (Role.ADMIN == user.getRole()) {
+
+        if (!Collections.singleton(Boolean.parseBoolean(roleValueBoolean)
+                ? Role.ADMIN : Role.USER).equals(user.getRole())){
+            if (!user.getRole().contains(Role.ADMIN)) {
                 interactionSystem.executeCommand(String.format("sudo usermod -aG sudo %s", user.getUsername()));
             } else {
                 interactionSystem.executeCommand(String.format("sudo deluser %s sudo", user.getUsername()));
@@ -101,7 +104,7 @@ public class UserService {
         return user;
     }
 
-    public UserOut createUser(UserOut user) {
+    public User createUser(User user) {
         if (!user.getPassword().isEmpty()) {
             interactionSystem.executeCommand(String.format(
                             "sudo adduser --gecos \"%s\" --disabled-password %s && echo \"%s:%s\" | sudo chpasswd",
@@ -111,8 +114,7 @@ public class UserService {
                     "sudo adduser --gecos \"%s\" --disabled-password %s",
                     user.getFullName(), user.getUsername()));
         }
-
-        if (Role.ADMIN == user.getRole()) {
+        if (!user.getRole().contains(Role.ADMIN)) {
             interactionSystem.executeCommand(String.format("sudo usermod -aG sudo %s",user.getUsername()));
         }
 

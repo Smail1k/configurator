@@ -1,16 +1,22 @@
 package ru.oleg.configurator.domain.user.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
-public class UserOut {
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
     private long id;
     private String username;
     private String fullName;
     private String password;
     private boolean isAutoIn;
-    private Role role;
+    private Set<Role> role;
 
 }

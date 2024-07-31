@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.oleg.configurator.domain.exception.NotFoundException;
 import ru.oleg.configurator.domain.user.UserService;
-import ru.oleg.configurator.domain.user.dto.UserOut;
+import ru.oleg.configurator.domain.user.dto.User;
 
 @Component
 @AllArgsConstructor
@@ -17,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        final UserOut user = userService.getUserByUsername(username);
+        final User user = userService.getUserByUsername(username);
         if (user == null) {
             throw new NotFoundException("Пользователь не найден");
         }

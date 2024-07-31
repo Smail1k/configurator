@@ -1,10 +1,14 @@
 package ru.oleg.configurator.domain.ssh.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SshConfig {
     // Network options
     private Integer port;

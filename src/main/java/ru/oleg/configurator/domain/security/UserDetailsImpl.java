@@ -1,22 +1,20 @@
 package ru.oleg.configurator.domain.security;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.oleg.configurator.domain.user.dto.Role;
-import ru.oleg.configurator.domain.user.dto.UserOut;
+import ru.oleg.configurator.domain.user.dto.User;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 
 
-public record UserDetailsImpl(UserOut user) implements UserDetails {
+public record UserDetailsImpl(User user) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Role role = this.user.getRole();
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return new HashSet<>(this.user.getRole());
     }
+
 
     @Override
     public String getPassword() {
