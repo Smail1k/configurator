@@ -24,14 +24,14 @@ import java.util.List;
 )
 public class SwaggerConfig {
 
-    private final String appVersion = "1.1.17";
+    private final String appVersion = "0.0.9";
     private final String appDescription = "";
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public OpenAPI openApi(final ServletContext servletContext) {
         return new OpenAPI()
-            .info(new Info().title("API серверной части приложения Hackathon")
+            .info(new Info().title("API серверной части приложения Configurator")
                 .version(appVersion)
                 .description(appDescription))
             .servers(

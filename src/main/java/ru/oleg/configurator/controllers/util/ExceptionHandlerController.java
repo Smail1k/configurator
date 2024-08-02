@@ -10,8 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.oleg.configurator.controllers.util.dto.ErrorMessage;
-import ru.oleg.configurator.domain.exception.*;
-import ru.oleg.configurator.domain.security.JwtAuthentication;
+import ru.oleg.configurator.exception.*;
+import ru.oleg.configurator.security.JwtAuthentication;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

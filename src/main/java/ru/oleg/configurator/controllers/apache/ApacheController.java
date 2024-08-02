@@ -1,15 +1,17 @@
 package ru.oleg.configurator.controllers.apache;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.oleg.configurator.domain.apache.ApacheService;
-import ru.oleg.configurator.domain.apache.dto.ApacheConfig;
+import ru.oleg.configurator.service.apache.ApacheService;
+import ru.oleg.configurator.service.apache.dto.ApacheConfig;
 
 
 @RestController
 @RequestMapping("/apache")
 @AllArgsConstructor
+@Tag(name = "Apache")
 public class ApacheController {
     private final ApacheService apacheService;
 
@@ -18,7 +20,7 @@ public class ApacheController {
         return ResponseEntity.ok(apacheService.getConfigApache());
     }
 
-    @PostMapping
+    @PatchMapping
     public ResponseEntity<ApacheConfig> updateConfigApache(@RequestBody ApacheConfig configApache) {
         return ResponseEntity.ok(apacheService.updateConfigApache(configApache));
     }

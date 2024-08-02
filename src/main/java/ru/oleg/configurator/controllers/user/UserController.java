@@ -1,16 +1,18 @@
 package ru.oleg.configurator.controllers.user;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.oleg.configurator.domain.user.dto.User;
-import ru.oleg.configurator.domain.user.UserService;
+import ru.oleg.configurator.service.user.dto.User;
+import ru.oleg.configurator.service.user.UserService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
+@Tag(name = "User")
 public class UserController {
     private final UserService userService;
 
