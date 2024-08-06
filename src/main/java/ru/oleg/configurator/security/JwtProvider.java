@@ -51,7 +51,7 @@ public class JwtProvider {
         final User user = ((UserDetailsImpl) userDetails).user();
         return new TokenOut(generateToken(userDetails, jwtAccessSecret, expirationAccessTime)
                 .claim("userId", user.getId())
-                .claim("Username", user.getUsername())
+                .claim("username", user.getUsername())
                 .claim("authorities", user.getRoles()
                         .stream()
                         .map(Role::getAuthority)

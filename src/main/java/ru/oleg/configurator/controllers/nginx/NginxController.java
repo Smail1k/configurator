@@ -20,7 +20,7 @@ public class NginxController {
     }
 
     @PatchMapping
-    public ResponseEntity<NginxConfig> updateConfigNginx(@RequestBody NginxConfig configNginx) {
+    public ResponseEntity<NginxConfig> updateConfigNginx(final @RequestBody NginxConfig configNginx) {
         return ResponseEntity.ok(nginxService.updateConfigNginx(configNginx));
     }
 }

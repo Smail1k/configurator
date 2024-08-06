@@ -3,7 +3,7 @@ package ru.oleg.configurator.service.ssh;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.oleg.configurator.service.ssh.dto.SshConfig;
-import ru.oleg.configurator.service.ssh.dto.UpdateParameterIn;
+import ru.oleg.configurator.service.utils.dto.UpdateParameterIn;
 import ru.oleg.configurator.service.utils.Parser;
 
 import java.io.IOException;
@@ -29,7 +29,7 @@ public class SshService {
         try {
             List<String> lines = Files.readAllLines(Paths.get(filePath));
             List<String> updatedLines = lines.stream()
-                    .map(line -> parsers.updateLine(line, updateParameterIn.getParameterName(),
+                    .map(line -> parsers.updateParameter(line, updateParameterIn.getParameterName(),
                             updateParameterIn.getParameterValue()))
                     .collect(Collectors.toList());
             Files.write(Paths.get(filePath), updatedLines, StandardOpenOption.TRUNCATE_EXISTING);

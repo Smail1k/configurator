@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.oleg.configurator.service.ssh.SshService;
 import ru.oleg.configurator.service.ssh.dto.SshConfig;
-import ru.oleg.configurator.service.ssh.dto.UpdateParameterIn;
+import ru.oleg.configurator.service.utils.dto.UpdateParameterIn;
 
 @RestController
 @RequestMapping("/ssh")
@@ -21,7 +21,7 @@ public class SshController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateConfigSSH(@RequestBody UpdateParameterIn updateParameterIn) {
+    public ResponseEntity<?> updateConfigSSH(final @RequestBody UpdateParameterIn updateParameterIn) {
         sshService.updateConfigSSH(updateParameterIn);
         return ResponseEntity.ok().build();
     }

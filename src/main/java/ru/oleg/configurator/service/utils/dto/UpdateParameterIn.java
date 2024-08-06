@@ -1,4 +1,4 @@
-package ru.oleg.configurator.service.ssh.dto;
+package ru.oleg.configurator.service.utils.dto;
 
 import lombok.Getter;
 import lombok.Setter;

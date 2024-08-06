@@ -24,7 +24,7 @@ import java.util.List;
 )
 public class SwaggerConfig {
 
-    private final String appVersion = "0.0.9";
+    private final String appVersion = "null";
     private final String appDescription = "";
 
     @Bean

@@ -15,7 +15,7 @@ public abstract class JwtAuthentication implements Authentication {
 
     private boolean authenticated;
     private String username;
-    private String firstName;
+    private String fullName;
     private Set<Role> roles;
 
     @Override
@@ -39,7 +39,7 @@ public abstract class JwtAuthentication implements Authentication {
     }
 
     @Override
-    public String getName() { return firstName; }
+    public String getName() { return fullName; }
 
     public abstract long getUserId();
 }

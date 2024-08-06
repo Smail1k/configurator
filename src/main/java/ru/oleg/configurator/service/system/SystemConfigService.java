@@ -33,9 +33,7 @@ public class SystemConfigService {
     }
 
     private String makeDeviceName() {
-        String deviceName;
-        deviceName = interactionSystem.executeCommand("hostname");
-        return deviceName;
+        return interactionSystem.executeCommand("hostname");
     }
 
     private String makeRamMemoryInfo() {
@@ -49,8 +47,7 @@ public class SystemConfigService {
     }
 
     private String makeCpuInfo() {
-        String cpuInfo;
-        cpuInfo = interactionSystem.executeCommand("lscpu");
+        String cpuInfo = interactionSystem.executeCommand("lscpu");
         if (cpuInfo != null) {
             String countCore = parsers.extractData(cpuInfo, "CPU\\(s\\):\\s+(\\d+)");
             String cpuModel = parsers.extractData(cpuInfo, "Имя модели:\\s+(.+)");
@@ -61,8 +58,7 @@ public class SystemConfigService {
     }
 
     private String makeGraphicsInfo() {
-        String graphicsInfo;
-        graphicsInfo = interactionSystem.executeCommand("lshw -c video");
+        String graphicsInfo = interactionSystem.executeCommand("lshw -c video");
         if (graphicsInfo != null) {
             return parsers.extractData(graphicsInfo, "описание:\\s+(.+)");
         } else {
@@ -71,8 +67,7 @@ public class SystemConfigService {
     }
 
     private String makeRomMemoryInfo() {
-        String romMemoryInfo;
-        romMemoryInfo = interactionSystem.executeCommand("df -h --total");
+        String romMemoryInfo = interactionSystem.executeCommand("df -h --total");
         if (romMemoryInfo != null) {
             String result = parsers.extractData(romMemoryInfo, "total\\s+([\\d,]*G)");
             return  result.substring(0, result.length() - 1);
@@ -82,8 +77,7 @@ public class SystemConfigService {
     }
 
     private String makeOsName() {
-        String osName;
-        osName = interactionSystem.executeCommand("lsb_release -a");
+        String osName = interactionSystem.executeCommand("lsb_release -a");
         if (osName != null) {
             return parsers.extractData(osName, "Description:\\s+(.+)");
         } else {
@@ -92,9 +86,7 @@ public class SystemConfigService {
     }
 
     private String makeOsType() {
-        String osType;
-        osType = interactionSystem.executeCommand("getconf LONG_BIT");
-        return osType;
+        return interactionSystem.executeCommand("getconf LONG_BIT");
     }
 
     private String makeEnvironmentVersion() {
@@ -113,9 +105,7 @@ public class SystemConfigService {
     }
 
     private String makeWindowInterface() {
-        String windowInterface;
-
-        windowInterface = interactionSystem.executeCommand("cat /etc/gdm3/custom.conf");
+        String windowInterface = interactionSystem.executeCommand("cat /etc/gdm3/custom.conf");
         if (windowInterface != null) {
             String waylandEnable = parsers.extractData(windowInterface, "#WaylandEnable=(.*)");
             if (Objects.equals(waylandEnable, "true")) {
@@ -129,8 +119,6 @@ public class SystemConfigService {
     }
 
     private String makeVirtualization() {
-        String virtualization;
-        virtualization = interactionSystem.executeCommand("systemd-detect-virt");
-        return virtualization;
+        return interactionSystem.executeCommand("systemd-detect-virt");
     }
 }

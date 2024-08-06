@@ -57,7 +57,7 @@ public class Parser {
                         if (Pattern.matches("\\d+", map[1])) {
                             field.set(config, Integer.parseInt(map[1]));
                         } else if (Pattern.matches("yes|no", map[1])) {
-                            field.set(config, parseYesNoToBoolean(map[1]));
+                            field.set(config, parseToBoolean(map[1]));
                         } else if (map[1].equals("none")) {
                             field.set(config, null);
                         } else {
@@ -74,11 +74,11 @@ public class Parser {
         return config;
     }
 
-    public static boolean parseYesNoToBoolean(String value) {
+    public static boolean parseToBoolean(String value) {
         return value.equalsIgnoreCase("yes");
     }
 
-    public String updateLine(String line, String parameterName, String parameterValue) {
+    public String updateParameter(String line, String parameterName, String parameterValue) {
         parameterName = parameterName.substring(0, 1).toUpperCase() + parameterName.substring(1);
         // Создаем шаблон для поиска строки с параметром
         String regex = "^[#\\s]*" + parameterName + "\\s*.*";

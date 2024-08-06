@@ -27,7 +27,7 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
 
     public RefreshOut login(@NonNull final JwtRequest authRequest) throws AuthenticationException {
-        final User user = userService.getUserByUsername(authRequest.username());
+        final User user = userService.getUser(authRequest.username());
         if (user==null) throw new AuthenticationException("Пользователь не найден") {};
 
         if (user.getPassword().equals(authRequest.password())) {

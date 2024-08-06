@@ -19,4 +19,11 @@ public class User {
     private boolean isAutoIn;
     private Set<Role> roles;
 
+    public User(UserIn updateUserIn) {
+        this.username = updateUserIn.username();
+        this.fullName = updateUserIn.fullName();
+        this.password = updateUserIn.password();
+        this.isAutoIn = updateUserIn.isAutoIn();
+        this.roles = updateUserIn.roles();
+    }
 }

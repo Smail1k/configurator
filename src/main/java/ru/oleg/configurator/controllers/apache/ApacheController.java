@@ -21,7 +21,7 @@ public class ApacheController {
     }
 
     @PatchMapping
-    public ResponseEntity<ApacheConfig> updateConfigApache(@RequestBody ApacheConfig configApache) {
+    public ResponseEntity<ApacheConfig> updateConfigApache(final @RequestBody ApacheConfig configApache) {
         return ResponseEntity.ok(apacheService.updateConfigApache(configApache));
     }
 

@@ -1,9 +1,12 @@
 package ru.oleg.configurator.controllers.user;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.oleg.configurator.security.JwtAuthentication;
+import ru.oleg.configurator.service.user.dto.UserIn;
 import ru.oleg.configurator.service.user.dto.User;
 import ru.oleg.configurator.service.user.UserService;
 
@@ -16,29 +19,26 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    @PostMapping("")
+    public ResponseEntity<User> createUser(final @RequestBody UserIn userIn) {
+        return ResponseEntity.ok(userService.createUser(userIn));
     }
 
-    @PatchMapping("/me")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.updateMe(user));
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        return ResponseEntity.ok(userService.updateUser(id, user));
+    @PatchMapping("")
+    public ResponseEntity<User> updateUser(final @RequestBody UserIn userIn,
+                                           final @NotNull JwtAuthentication jwtAuthentication) {
+        return ResponseEntity.ok(userService.updateUser(userIn, jwtAuthentication));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
-        userService.deleteUserByUsername(id);
+    public ResponseEntity<?> deleteUser(final @PathVariable long id,
+                                        final @NotNull JwtAuthentication jwtAuthentication) {
+        userService.deleteUser(id, jwtAuthentication);
         return ResponseEntity.ok().build();
     }
 }
